@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+nav {
+  background-color: green;
+  padding: 15px;
+}
+
+nav h1 {
+  color: white;
+  margin: 0;
+}
