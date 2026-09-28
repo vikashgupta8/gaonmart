@@ -12,9 +12,9 @@ export default defineConfig({
         enabled: true, // 👈 Isse local dev mode (localhost) mein PWA trigger hoga
       },
       manifest: {
-        name: 'GaonMart - Aapki Apni Dukaan',
-        short_name: 'GaonMart',
-        description: 'Gaon ki har zarurat, ab ghar baithe!',
+        name: 'Vikash Mart - Aapki Apni Dukaan',
+        short_name: 'Vikash Mart',
+        description: 'Kirana aur har zarurat ka samaan, seedhe aapke ghar!',
         theme_color: '#0b8f08',
         background_color: '#ffffff',
         display: 'standalone',

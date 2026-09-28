@@ -183,20 +183,31 @@ useEffect(() => {
       return
     }
 
-    let message = `*Namaste! GaonMart se naya order aaya hai:*\n`
-    message += `👤 Customer: ${userName}\n`
-    message += `📞 Mobile: ${userPhone}\n`
-    message += `📍 Delivery Pata: ${userAddress}\n`
-    message += `💳 Payment: ${paymentMethod}\n\n`
-    message += `*Items:*\n`
+    // 1. Samaan ki saaf list banao
+    const itemsSummary = cart
+      .map(
+        (item, index) =>
+          `${index + 1}. *${item.name}* (${item.qty} ${item.unit || 'unit'}) = ₹${item.price * item.qty}`
+      )
+      .join('\n')
 
-    cart.forEach((item, index) => {
-      message += `${index + 1}. ${item.name} (${item.qty} ${item.unit}) - ₹${item.price * item.qty}\n`
-    })
+    // 2. Dukandar ka number (91 ke sath apna 10 digit number daalo)
+    const storeNumber = '917783891504'
 
-    message += `\n*Total Bill: ₹${total}*`
+    // 3. Poora structure ek hi baar mein taiyar karo
+    const message = `🛍️ *NAYA ORDER - VIKASH MART*\n` +
+      `--------------------------------\n` +
+      `👤 *Grahak:* ${userName.trim()}\n` +
+      `📞 *Phone:* ${userPhone.trim()}\n` +
+      `📍 *Pata:* ${userAddress.trim()}\n` +
+      `💳 *Payment:* ${paymentMethod}\n` +
+      `--------------------------------\n` +
+      `🛒 *Samaan List:*\n${itemsSummary}\n` +
+      `--------------------------------\n` +
+      `💰 *Kul Rakam (Total):* ₹${total}\n` +
+      `--------------------------------\n` +
+      `_Kripya order confirm karke delivery ka samay batayein._`
 
-    const storeNumber = '919876543210'
     const whatsappUrl = `https://wa.me/${storeNumber}?text=${encodeURIComponent(message)}`
 
     window.open(whatsappUrl, '_blank')
@@ -204,8 +215,10 @@ useEffect(() => {
     setCart([]) // Cart khali kar do
     localStorage.removeItem('gaonmart_cart') // Memory se bhi hata do
     setShowCart(false) // Cart popup band kar do
-    setNotification('🎉 Order WhatsApp par bhej diya gaya hai!')
-    setTimeout(() => setNotification(''), 4000)
+    if (typeof setNotification === 'function') {
+      setNotification('🎉 Order WhatsApp par bhej diya gaya hai!')
+      setTimeout(() => setNotification(''), 4000)
+    }
   }
 
   const filteredProducts = PRODUCTS.filter((item) => {
