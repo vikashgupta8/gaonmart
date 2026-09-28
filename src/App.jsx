@@ -12,8 +12,10 @@ import CartModal from './components/CartModal'
 import BottomCartBar from './components/BottomCartBar'
 import InstallPrompt from './components/InstallPrompt'
 
-const MIN_ORDER_AMOUNT = 100
 
+const MIN_ORDER_AMOUNT = 100 // Kam se kam order rakam
+const FREE_DELIVERY_THRESHOLD = 300 // ₹300 se upar free delivery
+const DELIVERY_FEE = 20 // ₹300 se kam par lagne wala delivery charge
 function App() {
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem('gaonmart_cart')
@@ -182,6 +184,9 @@ useEffect(() => {
       alert(`Home delivery ke liye kam se kam ₹${MIN_ORDER_AMOUNT} ka order hona zaroori hai!`)
       return
     }
+
+    const deliveryCharge = itemsTotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
+    const finalGrandTotal = itemsTotal + deliveryCharge
 
     // 1. Samaan ki saaf list banao
     const itemsSummary = cart

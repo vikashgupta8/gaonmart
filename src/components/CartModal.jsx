@@ -52,6 +52,27 @@ export default function CartModal({
               <strong>Total Bill: ₹{cartTotal}</strong>
             </div>
 
+{/* Subtotal aur Delivery status */}
+<div style={{ padding: '12px 0', borderTop: '1px dashed #ccc', marginTop: '10px' }}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+    <span>Samaan Ka Total:</span>
+    <strong>₹{cartTotal}</strong>
+  </div>
+  <div style={{ display: 'flex', justifyContent: 'space-between', color: cartTotal >= 300 ? '#0b8f08' : '#e65100' }}>
+    <span>Delivery Fee:</span>
+    <strong>{cartTotal >= 300 ? 'FREE' : '₹20'}</strong>
+  </div>
+  {cartTotal < 300 && (
+    <p style={{ fontSize: '11px', color: '#666', margin: '4px 0 0' }}>
+      💡 ₹{300 - cartTotal} ka samaan aur jodein aur payein <strong>FREE Delivery</strong>!
+    </p>
+  )}
+  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', marginTop: '8px', borderTop: '1px solid #eee', paddingTop: '8px' }}>
+    <strong>Kul Rakam (Total):</strong>
+    <strong style={{ color: '#0b8f08' }}>₹{cartTotal + (cartTotal >= 300 ? 0 : 20)}</strong>
+  </div>
+</div>
+
             {cartTotal < minOrder && (
               <p className="min-order-alert">
                 Kam se kam ₹{minOrder} ka order hona chahiye! (Abhi ₹{minOrder - cartTotal} baaki)
