@@ -170,25 +170,27 @@ useEffect(() => {
   }
 
 
- const sendOrderToWhatsApp = () => {
+const sendOrderToWhatsApp = () => {
     if (cart.length === 0) return
 
-    // Naam, phone aur address check karo
     if (!userName.trim() || !userPhone.trim() || !userAddress.trim()) {
       alert('Kripya apna Naam, Mobile Number aur Pata bharein!')
       return
     }
 
-    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
-    if (total < MIN_ORDER_AMOUNT) {
-      alert(`Home delivery ke liye kam se kam ₹${MIN_ORDER_AMOUNT} ka order hona zaroori hai!`)
+    // 1. Samaan ka total calculate karo (ye missing tha)
+    const itemsTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
+    
+    if (itemsTotal < MIN_ORDER_AMOUNT) {
+      alert(`Kam se kam ₹${MIN_ORDER_AMOUNT} ka order hona zaroori hai!`)
       return
     }
 
+    // 2. Delivery charge calculation
     const deliveryCharge = itemsTotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
     const finalGrandTotal = itemsTotal + deliveryCharge
 
-    // 1. Samaan ki saaf list banao
+    // 3. Samaan ki list
     const itemsSummary = cart
       .map(
         (item, index) =>
@@ -196,30 +198,35 @@ useEffect(() => {
       )
       .join('\n')
 
-    // 2. Dukandar ka number (91 ke sath apna 10 digit number daalo)
+    // Dukandar ka number (91 ke sath apna 10 digit number)
     const storeNumber = '917783891504'
 
-    // 3. Poora structure ek hi baar mein taiyar karo
+    const paymentNote = paymentMethod === 'Online UPI' 
+      ? 'Online UPI (Screenshot WhatsApp par bheja jayega)' 
+      : 'Cash on Delivery (Ghar par cash denge)'
+
     const message = `🛍️ *NAYA ORDER - VIKASH MART*\n` +
       `--------------------------------\n` +
       `👤 *Grahak:* ${userName.trim()}\n` +
       `📞 *Phone:* ${userPhone.trim()}\n` +
       `📍 *Pata:* ${userAddress.trim()}\n` +
-      `💳 *Payment:* ${paymentMethod}\n` +
+      `💳 *Payment:* ${paymentNote}\n` +
       `--------------------------------\n` +
       `🛒 *Samaan List:*\n${itemsSummary}\n` +
       `--------------------------------\n` +
-      `💰 *Kul Rakam (Total):* ₹${total}\n` +
+      `📦 *Samaan Total:* ₹${itemsTotal}\n` +
+      `🚚 *Delivery Fee:* ${deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge}`}\n` +
+      `💰 *Kul Rakam (Grand Total):* ₹${finalGrandTotal}\n` +
       `--------------------------------\n` +
-      `_Kripya order confirm karke delivery ka samay batayein._`
+      `_Kripya order confirm karein._`
 
     const whatsappUrl = `https://wa.me/${storeNumber}?text=${encodeURIComponent(message)}`
 
     window.open(whatsappUrl, '_blank')
 
-    setCart([]) // Cart khali kar do
-    localStorage.removeItem('gaonmart_cart') // Memory se bhi hata do
-    setShowCart(false) // Cart popup band kar do
+    setCart([])
+    localStorage.removeItem('gaonmart_cart')
+    setShowCart(false)
     if (typeof setNotification === 'function') {
       setNotification('🎉 Order WhatsApp par bhej diya gaya hai!')
       setTimeout(() => setNotification(''), 4000)
@@ -256,21 +263,20 @@ useEffect(() => {
       />
      {showCart && (
         <CartModal
-          cart={cart}
-          onClose={() => setShowCart(false)}
-          onUpdateQty={typeof updateQuantity !== 'undefined' ? updateQuantity : updateQty}
-          cartTotal={cartTotal}
-          minOrder={typeof MIN_ORDER_AMOUNT !== 'undefined' ? MIN_ORDER_AMOUNT : 100}
-          userName={userName}
-          setUserName={setUserName}
-          userPhone={userPhone}
-          setUserPhone={setUserPhone}
-          userAddress={userAddress}
-          setUserAddress={setUserAddress}
-          paymentMethod={paymentMethod}
-          setPaymentMethod={setPaymentMethod}
-          onCheckout={sendOrderToWhatsApp}
-        />
+  isOpen={showCart}
+  onClose={() => setShowCart(false)}
+  cart={cart}
+  setCart={setCart}
+  userName={userName}
+  setUserName={setUserName}
+  userPhone={userPhone}
+  setUserPhone={setUserPhone}
+  userAddress={userAddress}
+  setUserAddress={setUserAddress}
+  paymentMethod={paymentMethod}             // 👈 Ye zaroori hai
+  setPaymentMethod={setPaymentMethod}       // 👈 Ye zaroori hai
+  onCheckout={sendOrderToWhatsApp}
+/>
       )}
      {/* 👉 Clean Hero Component */}
       <Hero onShopNow={() => setSelectedCategory('All')} />

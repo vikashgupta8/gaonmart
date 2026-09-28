@@ -1,11 +1,10 @@
 import React from 'react'
 
 export default function CartModal({
-  cart,
+  isOpen,
   onClose,
-  onUpdateQty,
-  cartTotal,
-  minOrder,
+  cart,
+  setCart,
   userName,
   setUserName,
   userPhone,
@@ -14,105 +13,248 @@ export default function CartModal({
   setUserAddress,
   paymentMethod,
   setPaymentMethod,
-  onCheckout,
+  onCheckout
 }) {
+  if (!isOpen) return null
+
+  // 1. Cart ka kul jod (Total) yahan calculate hota hai
+  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
+  
+  // 2. Delivery Charge rule (₹300 se upar Free, warna ₹20)
+  const deliveryFee = cartTotal >= 300 ? 0 : 20
+  const grandTotal = cartTotal + deliveryFee
+
+  // Quantity badhane ka function
+  const updateQty = (id, delta) => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) => {
+          if (item.id === id) {
+            const newQty = item.qty + delta
+            return newQty > 0 ? { ...item, qty: newQty } : null
+          }
+          return item
+        })
+        .filter(Boolean)
+    )
+  }
+
   return (
-    <div className="cart-overlay" onClick={onClose}>
-      {/* stopPropagation isliye taaki dabba ke andar click karne par modal band na ho */}
-      <div className="cart-modal-container" onClick={(e) => e.stopPropagation()}>
-        <div className="cart-header">
-          <h2>🛒 Aapka Cart</h2>
-          <button className="cart-close-btn" onClick={onClose}>✕</button>
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000,
+      padding: '16px'
+    }}>
+      <div style={{
+        background: '#fff',
+        borderRadius: '12px',
+        width: '100%',
+        maxWidth: '480px',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        padding: '20px',
+        position: 'relative'
+      }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h2 style={{ margin: 0, fontSize: '20px', color: '#111' }}>🛒 Aapka Cart</h2>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#666' }}
+          >
+            ✕
+          </button>
         </div>
 
+        {/* Cart Item List */}
         {cart.length === 0 ? (
-          <div className="empty-cart-msg">
-            <p>Cart khali hai!</p>
-            <button className="btn-shop-more" onClick={onClose}>Samaan Chunein</button>
-          </div>
+          <p style={{ textAlign: 'center', color: '#666', padding: '20px 0' }}>Aapka cart khali hai!</p>
         ) : (
-          <div className="cart-body-scroll">
-            <div className="cart-items-wrapper">
-              {cart.map((item) => (
-                <div className="cart-item-row" key={item.id}>
-                  <div className="cart-item-details">
-                    <strong>{item.name}</strong>
-                    <p>₹{item.price} × {item.qty} = ₹{item.price * item.qty}</p>
-                  </div>
-                  <div className="qty-box">
-                    <button onClick={() => onUpdateQty(item.id, -1)}>-</button>
-                    <span>{item.qty}</span>
-                    <button onClick={() => onUpdateQty(item.id, 1)}>+</button>
+          <div>
+            {cart.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '8px 0',
+                  borderBottom: '1px solid #f0f0f0'
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: '600' }}>{item.name}</div>
+                  <div style={{ fontSize: '13px', color: '#666' }}>
+                    ₹{item.price} / {item.unit || 'unit'}
                   </div>
                 </div>
-              ))}
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    onClick={() => updateQty(item.id, -1)}
+                    style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid #ccc', background: '#f9f9f9', cursor: 'pointer' }}
+                  >
+                    -
+                  </button>
+                  <span style={{ fontWeight: 'bold', minWidth: '20px', textAlign: 'center' }}>{item.qty}</span>
+                  <button
+                    onClick={() => updateQty(item.id, 1)}
+                    style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid #ccc', background: '#f9f9f9', cursor: 'pointer' }}
+                  >
+                    +
+                  </button>
+                  <span style={{ minWidth: '55px', textAlign: 'right', fontWeight: 'bold' }}>
+                    ₹{item.price * item.qty}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {/* Bill Summary */}
+            <div style={{ padding: '12px 0', borderTop: '1px dashed #ccc', marginTop: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span>Samaan Ka Total:</span>
+                <strong>₹{cartTotal}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: deliveryFee === 0 ? '#0b8f08' : '#e65100' }}>
+                <span>Delivery Charge:</span>
+                <strong>{deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}</strong>
+              </div>
+              {cartTotal < 300 && (
+                <p style={{ fontSize: '11px', color: '#666', margin: '4px 0 0' }}>
+                  💡 ₹{300 - cartTotal} ka samaan aur jodein aur payein <strong>FREE Delivery</strong>!
+                </p>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', marginTop: '8px', borderTop: '1px solid #eee', paddingTop: '8px' }}>
+                <strong>Kul Rakam (Total):</strong>
+                <strong style={{ color: '#0b8f08' }}>₹{grandTotal}</strong>
+              </div>
             </div>
 
-            <div className="cart-total-box">
-              <strong>Total Bill: ₹{cartTotal}</strong>
-            </div>
-
-{/* Subtotal aur Delivery status */}
-<div style={{ padding: '12px 0', borderTop: '1px dashed #ccc', marginTop: '10px' }}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-    <span>Samaan Ka Total:</span>
-    <strong>₹{cartTotal}</strong>
-  </div>
-  <div style={{ display: 'flex', justifyContent: 'space-between', color: cartTotal >= 300 ? '#0b8f08' : '#e65100' }}>
-    <span>Delivery Fee:</span>
-    <strong>{cartTotal >= 300 ? 'FREE' : '₹20'}</strong>
-  </div>
-  {cartTotal < 300 && (
-    <p style={{ fontSize: '11px', color: '#666', margin: '4px 0 0' }}>
-      💡 ₹{300 - cartTotal} ka samaan aur jodein aur payein <strong>FREE Delivery</strong>!
-    </p>
-  )}
-  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', marginTop: '8px', borderTop: '1px solid #eee', paddingTop: '8px' }}>
-    <strong>Kul Rakam (Total):</strong>
-    <strong style={{ color: '#0b8f08' }}>₹{cartTotal + (cartTotal >= 300 ? 0 : 20)}</strong>
-  </div>
-</div>
-
-            {cartTotal < minOrder && (
-              <p className="min-order-alert">
-                Kam se kam ₹{minOrder} ka order hona chahiye! (Abhi ₹{minOrder - cartTotal} baaki)
-              </p>
-            )}
-
-            <div className="customer-inputs">
+            {/* Customer Information Form */}
+            <div style={{ marginTop: '16px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>Aapka Naam:</label>
               <input
                 type="text"
-                placeholder="Aapka Naam *"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
+                placeholder="Jaise: Vikash Kumar"
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #ccc', marginBottom: '10px', boxSizing: 'border-box' }}
               />
+
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>Mobile Number:</label>
               <input
                 type="tel"
-                placeholder="Mobile Number *"
                 value={userPhone}
                 onChange={(e) => setUserPhone(e.target.value)}
+                placeholder="10 digit mobile number"
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #ccc', marginBottom: '10px', boxSizing: 'border-box' }}
               />
-              <input
-                type="text"
-                placeholder="Gaon / Ward / Pata *"
+
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>Ghar / Gaon ka Pata:</label>
+              <textarea
                 value={userAddress}
                 onChange={(e) => setUserAddress(e.target.value)}
+                placeholder="Ghar no., Ward no., ya Landmark"
+                rows="2"
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #ccc', marginBottom: '10px', boxSizing: 'border-box' }}
               />
-              <select
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              >
-                <option value="Cash on Delivery">💵 Cash on Delivery (COD)</option>
-                <option value="UPI / Online">📲 UPI / QR Code</option>
-              </select>
             </div>
 
+            {/* Payment Method Selection */}
+            <div style={{ margin: '14px 0', borderTop: '1px solid #eee', paddingTop: '12px' }}>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px' }}>
+                💳 Payment ka Tareeqa:
+              </label>
+
+              <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name="paymentMode"
+                    value="Cash on Delivery"
+                    checked={paymentMethod === 'Cash on Delivery'}
+                    onChange={() => setPaymentMethod('Cash on Delivery')}
+                  />
+                  💵 Cash on Delivery
+                </label>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name="paymentMode"
+                    value="Online UPI"
+                    checked={paymentMethod === 'Online UPI'}
+                    onChange={() => setPaymentMethod('Online UPI')}
+                  />
+                  📱 UPI / QR Code
+                </label>
+              </div>
+
+              {/* Dynamic QR Code */}
+              {paymentMethod === 'Online UPI' && (
+                <div style={{
+                  background: '#f8fafc',
+                  border: '2px dashed #0b8f08',
+                  padding: '14px',
+                  borderRadius: '10px',
+                  textAlign: 'center',
+                  marginTop: '10px'
+                }}>
+                  <p style={{ margin: '0 0 8px', fontSize: '13px', color: '#0b8f08', fontWeight: 'bold' }}>
+                    Scan karke ₹{grandTotal} Pay Karein:
+                  </p>
+
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                      `upi://pay?pa=9876543210@ybl&pn=VikashMart&am=${grandTotal}&cu=INR`
+                    )}`}
+                    alt="Payment QR Code"
+                    style={{
+                      width: '160px',
+                      height: '160px',
+                      borderRadius: '8px',
+                      background: '#ffffff',
+                      padding: '8px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                    }}
+                  />
+
+                  <p style={{ margin: '8px 0 2px', fontSize: '13px', color: '#333' }}>
+                    UPI ID: <strong>7783891504@ybl</strong>
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#e11d48', fontWeight: 'bold' }}>
+                    *Payment ke baad WhatsApp par screenshot zaroor bhejein!
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Checkout Button */}
             <button
-              className="checkout-btn"
-              disabled={cartTotal < minOrder}
               onClick={onCheckout}
+              style={{
+                width: '100%',
+                background: '#0b8f08',
+                color: '#fff',
+                border: 'none',
+                padding: '14px',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginTop: '10px'
+              }}
             >
-              WhatsApp Par Order Karein
+              WhatsApp Par Order Bhejein (₹{grandTotal})
             </button>
           </div>
         )}
