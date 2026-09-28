@@ -28,4 +28,102 @@ export const PRODUCTS = [
   { id: 18, name: 'Band-Aid Strips', category: 'Medicine', price: 20, unit: 'pack', img: '/images/bandaid.jpg' },
   { id: 19, name: 'LED Bulb 9W', category: 'Hardware', price: 85, unit: 'piece', img: '/images/bulb.jpg' },
   { id: 20, name: 'Bathing Soap (Dettol)', category: 'Personal Care', price: 40, unit: 'bar', img: '/images/soap.jpg' },
+
+
+  
+  // --- Ration / Atta & Dal ---
+  {
+    id: 1,
+    name: 'Aashirvaad Shudh Chakki Atta',
+    unit: '5 kg',
+    price: 215,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 2,
+    name: 'Tata Sampann Arhar / Toor Dal',
+    unit: '1 kg',
+    price: 165,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1585994192700-474a59ae71c5?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 3,
+    name: 'Fortune Kachi Ghani Mustard Oil',
+    unit: '1 L',
+    price: 145,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 4,
+    name: 'Tata Salt Vacuum Evaporated',
+    unit: '1 kg',
+    price: 28,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 5,
+    name: 'Madhur Pure & Hygienic Sugar',
+    unit: '1 kg',
+    price: 46,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1622484212850-cab596d66e74?auto=format&fit=crop&w=400&q=80'
+  },
+
+  // --- Chai & Biscuits ---
+  {
+    id: 6,
+    name: 'Tata Tea Gold Leaf Tea',
+    unit: '500 g',
+    price: 260,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 7,
+    name: 'Parle-G Gold Biscuits Pack',
+    unit: '1 kg',
+    price: 90,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=400&q=80'
+  },
+
+  // --- Spices / Masale ---
+  {
+    id: 8,
+    name: 'Catch Turmeric Powder (Haldi)',
+    unit: '200 g',
+    price: 45,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 9,
+    name: 'MDH Deggi Mirch Powder',
+    unit: '100 g',
+    price: 68,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=80'
+  },
+
+  // --- Cleaning & Personal Care ---
+  {
+    id: 10,
+    name: 'Surf Excel Quick Wash Detergent',
+    unit: '1 kg',
+    price: 140,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 11,
+    name: 'Dettol Original Bathing Soap (Buy 3 Get 1)',
+    unit: '4 x 100 g',
+    price: 135,
+    category: 'Grocery',
+    image: 'https://images.unsplash.com/photo-1607006314144-88484e92eb0e?auto=format&fit=crop&w=400&q=80'
+  }
 ]
