@@ -1,0 +1,31 @@
+export const CATEGORIES = [
+  { id: 1, name: 'Grocery', icon: '🥦', desc: 'Ration & Kitchen' },
+  { id: 2, name: 'Dairy', icon: '🥛', desc: 'Milk, Dahi & Ghee' },
+  { id: 3, name: 'Snacks', icon: '🍪', desc: 'Biscuits & Noodles' },
+  { id: 4, name: 'Medicine', icon: '💊', desc: 'First Aid & Tablets' },
+  { id: 5, name: 'Hardware', icon: '💡', desc: 'Bulb & Electricals' },
+  { id: 6, name: 'Personal Care', icon: '🧼', desc: 'Soap & Hygiene' },
+]
+
+export const PRODUCTS = [
+  { id: 1, name: 'Fresh Potato (Aalu)', category: 'Grocery', price: 30, unit: 'kg', img: '/images/potato.jpg' },
+  { id: 2, name: 'Onion (Pyaaz)', category: 'Grocery', price: 35, unit: 'kg', img: '/images/onion.jpg' },
+  { id: 3, name: 'Tomato (Tamatar)', category: 'Grocery', price: 40, unit: 'kg', img: '/images/tomato.jpg' },
+  { id: 4, name: 'Basmati Rice', category: 'Grocery', price: 65, unit: 'kg', img: '/images/rice.jpg' },
+  { id: 5, name: 'Wheat Flour (Aata)', category: 'Grocery', price: 35, unit: 'kg', img: '/images/flour.jpg' },
+  { id: 6, name: 'Mustard Oil (Sarson Tel)', category: 'Grocery', price: 145, unit: 'litre', img: '/images/oil.jpg' },
+  { id: 7, name: 'Sugar (Cheeni)', category: 'Grocery', price: 44, unit: 'kg', img: '/images/sugar.jpg' },
+  { id: 8, name: 'Tata Salt (Namak)', category: 'Grocery', price: 28, unit: 'packet', img: '/images/salt.jpg' },
+  { id: 9, name: 'Red Label Tea (Chai)', category: 'Grocery', price: 125, unit: '250g', img: '/images/tea.jpg' },
+  { id: 10, name: 'Arhar Dal', category: 'Grocery', price: 155, unit: 'kg', img: '/images/dal.jpg' },
+  { id: 11, name: 'Maggi Noodles', category: 'Snacks', price: 14, unit: 'packet', img: '/images/maggi.jpg' },
+  { id: 12, name: 'Parle-G Biscuit', category: 'Snacks', price: 10, unit: 'packet', img: '/images/biscuit.jpg' },
+  { id: 13, name: 'Fresh Milk', category: 'Dairy', price: 62, unit: 'litre', img: '/images/milk.jpg' },
+  { id: 14, name: 'Curd (Dahi)', category: 'Dairy', price: 40, unit: '400g', img: '/images/curd.jpg' },
+  { id: 15, name: 'Fresh Paneer', category: 'Dairy', price: 95, unit: '250g', img: '/images/paneer.jpg' },
+  { id: 16, name: 'Desi Ghee', category: 'Dairy', price: 320, unit: '500g', img: '/images/ghee.jpg' },
+  { id: 17, name: 'Paracetamol 650mg', category: 'Medicine', price: 30, unit: 'strip', img: '/images/paracetamol.jpg' },
+  { id: 18, name: 'Band-Aid Strips', category: 'Medicine', price: 20, unit: 'pack', img: '/images/bandaid.jpg' },
+  { id: 19, name: 'LED Bulb 9W', category: 'Hardware', price: 85, unit: 'piece', img: '/images/bulb.jpg' },
+  { id: 20, name: 'Bathing Soap (Dettol)', category: 'Personal Care', price: 40, unit: 'bar', img: '/images/soap.jpg' },
+]
