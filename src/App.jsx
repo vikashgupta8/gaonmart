@@ -12,6 +12,7 @@ import CartModal from './components/CartModal'
 import BottomCartBar from './components/BottomCartBar'
 import InstallPrompt from './components/InstallPrompt'
 import AddProductModal from './components/AddProductModal'
+import { QRCodeSVG } from 'qrcode.react'
 
 const MIN_ORDER_AMOUNT = 100 // Kam se kam order rakam
 const FREE_DELIVERY_THRESHOLD = 300 // ₹300 se upar free delivery

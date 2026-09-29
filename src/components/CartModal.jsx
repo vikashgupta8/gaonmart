@@ -39,6 +39,35 @@ export default function CartModal({
     )
   }
 
+  const [locLoading, setLocLoading] = useState(false)
+
+const handleGetLocation = () => {
+  if (!navigator.geolocation) {
+    alert('Aapke browser mein GPS support nahi hai!')
+    return
+  }
+
+  setLocLoading(true)
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords
+      const mapsUrl = `https://maps.google.com/?q=${latitude},${longitude}`
+      setUserAddress((prev) => (prev ? `${prev}\n📍 Map: ${mapsUrl}` : `📍 Map: ${mapsUrl}`))
+      setLocLoading(false)
+    },
+    (err) => {
+      setLocLoading(false)
+      if (err.code === 1) {
+        alert('Location permission block hai. Chrome settings mein jaakar location allow karein.')
+      } else {
+        alert('Location prapt nahi ho saki. Kripya phone ka GPS on rakhein.')
+      }
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  )
+}
+
   return (
     <div style={{
       position: 'fixed',
@@ -214,6 +243,26 @@ export default function CartModal({
 >
   📍 Meri Current Location Lein (Google Maps)
 </button>
+
+<button
+  type="button"
+  onClick={handleGetLocation}
+  disabled={locLoading}
+  style={{
+    background: '#e0f2fe',
+    color: '#0369a1',
+    border: '1px solid #bae6fd',
+    padding: '8px 12px',
+    borderRadius: '6px',
+    fontSize: '13px',
+    fontWeight: 'bold',
+    cursor: locLoading ? 'not-allowed' : 'pointer',
+    width: '100%',
+    marginBottom: '12px'
+  }}
+>
+  {locLoading ? '⏳ Location li ja rahi hai...' : '📍 Meri Current Location Lein (Google Maps)'}
+</button>
             </div>
 
             {/* Payment Method Selection */}
@@ -247,42 +296,35 @@ export default function CartModal({
               </div>
 
               {/* Dynamic QR Code */}
-              {paymentMethod === 'Online UPI' && (
-                <div style={{
-                  background: '#f8fafc',
-                  border: '2px dashed #0b8f08',
-                  padding: '14px',
-                  borderRadius: '10px',
-                  textAlign: 'center',
-                  marginTop: '10px'
-                }}>
-                  <p style={{ margin: '0 0 8px', fontSize: '13px', color: '#0b8f08', fontWeight: 'bold' }}>
-                    Scan karke ₹{grandTotal} Pay Karein:
-                  </p>
+            {paymentMethod === 'Online UPI' && (
+  <div style={{
+    background: '#f8fafc',
+    border: '2px dashed #16a34a',
+    padding: '14px',
+    borderRadius: '10px',
+    textAlign: 'center',
+    marginTop: '10px'
+  }}>
+    <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#15803d', fontWeight: 'bold' }}>
+      Scan karke ₹{grandTotal} Pay Karein:
+    </p>
 
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-                      `upi://pay?pa=9876543210@ybl&pn=VikashMart&am=${grandTotal}&cu=INR`
-                    )}`}
-                    alt="Payment QR Code"
-                    style={{
-                      width: '160px',
-                      height: '160px',
-                      borderRadius: '8px',
-                      background: '#ffffff',
-                      padding: '8px',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
-                    }}
-                  />
+    <div style={{ display: 'inline-block', background: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+      <QRCodeSVG
+        value={`upi://pay?pa=9876543210@ybl&pn=VikashMart&am=${grandTotal}&cu=INR`}
+        size={170}
+        level="M"
+      />
+    </div>
 
-                  <p style={{ margin: '8px 0 2px', fontSize: '13px', color: '#333' }}>
-                    UPI ID: <strong>7783891504@ybl</strong>
-                  </p>
-                  <span style={{ fontSize: '11px', color: '#e11d48', fontWeight: 'bold' }}>
-                    *Payment ke baad WhatsApp par screenshot zaroor bhejein!
-                  </span>
-                </div>
-              )}
+    <p style={{ margin: '8px 0 2px', fontSize: '13px', color: '#333' }}>
+      UPI ID: <strong>9876543210@ybl</strong>
+    </p>
+    <span style={{ fontSize: '11px', color: '#dc2626', fontWeight: 'bold', display: 'block' }}>
+      *Payment ke baad WhatsApp par screenshot zaroor bhejein!
+    </span>
+  </div>
+)}
             </div>
 
             {/* Checkout Button */}
