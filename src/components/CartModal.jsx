@@ -167,6 +167,53 @@ export default function CartModal({
                 rows="2"
                 style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid #ccc', marginBottom: '10px', boxSizing: 'border-box' }}
               />
+
+              {/* 📍 GPS Location Auto-detect Button */}
+<button
+  type="button"
+  onClick={() => {
+    if (!navigator.geolocation) {
+      alert('Aapke browser mein GPS support nahi hai!')
+      return
+    }
+    
+    // Button par loading text dikhane ke liye
+    const btn = document.getElementById('gps-loc-btn')
+    if (btn) btn.innerText = '⏳ Location li ja rahi hai...'
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude
+        const lng = position.coords.longitude
+        const mapsLink = `https://maps.google.com/?q=${lat},${lng}`
+        
+        // Pata ke sath Maps link jod do
+        setUserAddress((prev) => prev ? `${prev}\n📍 Map: ${mapsLink}` : `📍 Map: ${mapsLink}`)
+        if (btn) btn.innerText = '✅ Location Jud Gayi!'
+      },
+      (error) => {
+        alert('GPS location lene ki anumati (permission) nahi mili. Kripya phone mein location on karein.')
+        if (btn) btn.innerText = '📍 Meri Current Location Lein'
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }}
+  id="gps-loc-btn"
+  style={{
+    background: '#e0f2fe',
+    color: '#0284c7',
+    border: '1px solid #bae6fd',
+    padding: '7px 12px',
+    borderRadius: '6px',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    width: '100%',
+    marginBottom: '12px'
+  }}
+>
+  📍 Meri Current Location Lein (Google Maps)
+</button>
             </div>
 
             {/* Payment Method Selection */}

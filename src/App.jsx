@@ -11,12 +11,26 @@ import Hero from './components/Hero'
 import CartModal from './components/CartModal'
 import BottomCartBar from './components/BottomCartBar'
 import InstallPrompt from './components/InstallPrompt'
-
+import AddProductModal from './components/AddProductModal'
 
 const MIN_ORDER_AMOUNT = 100 // Kam se kam order rakam
 const FREE_DELIVERY_THRESHOLD = 300 // ₹300 se upar free delivery
 const DELIVERY_FEE = 20 // ₹300 se kam par lagne wala delivery charge
 function App() {
+
+  const [productsList, setProductsList] = useState(() => {
+    const saved = localStorage.getItem('vikashmart_custom_products')
+    return saved ? JSON.parse(saved) : PRODUCTS
+  })
+  const [showAddProduct, setShowAddProduct] = useState(false)
+
+  const handleAddProduct = (newProduct) => {
+    const updated = [newProduct, ...productsList]
+    setProductsList(updated)
+    localStorage.setItem('vikashmart_custom_products', JSON.stringify(updated))
+  }
+
+
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem('gaonmart_cart')
     return savedCart ? JSON.parse(savedCart) : []
@@ -33,6 +47,9 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState('All')
 
   const [notification, setNotification] = useState('')
+
+ 
+
 
 
 useEffect(() => {
@@ -233,18 +250,16 @@ const sendOrderToWhatsApp = () => {
     }
   }
 
-  const filteredProducts = PRODUCTS.filter((item) => {
-    // 1. Search filter
+  const filteredProducts = productsList.filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase().trim())
-    
-    // 2. Category filter (case-insensitive check)
-    const matchesCategory = 
-      selectedCategory === 'All' || 
+    const matchesCategory =
+      selectedCategory === 'All' ||
       item.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase()
 
     return matchesSearch && matchesCategory
   })
 
+ 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
     return (
     <>
@@ -252,6 +267,7 @@ const sendOrderToWhatsApp = () => {
       {notification && <div className="toast-notification">{notification}</div>}
 {/* 👉 PWA Custom Install Banner */}
       <InstallPrompt />
+      
      <Navbar
         search={search}
         setSearch={setSearch}
@@ -278,6 +294,13 @@ const sendOrderToWhatsApp = () => {
   onCheckout={sendOrderToWhatsApp}
 />
       )}
+
+<AddProductModal
+        isOpen={showAddProduct}
+        onClose={() => setShowAddProduct(false)}
+        onAddProduct={handleAddProduct}
+      />
+
      {/* 👉 Clean Hero Component */}
       <Hero onShopNow={() => setSelectedCategory('All')} />
 
@@ -292,11 +315,11 @@ const sendOrderToWhatsApp = () => {
         {/* Products Grid */}
       <ProductList products={filteredProducts} onAddToCart={addToCart} />
      {/* 👉 Mobile Floating Cart Bar */}
-     <BottomCartBar
-        cart={cart}
-        cartTotal={cartTotal}
-        onOpenCart={() => setShowCart(true)}
-      />
+     <BottomCartBar 
+  cart={cart} 
+  cartTotal={cart.reduce((sum, item) => sum + item.price * item.qty, 0)} 
+  onOpenCart={() => setShowCart(true)} 
+/>
     </>
   )
 }
